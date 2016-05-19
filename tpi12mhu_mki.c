@@ -133,7 +133,7 @@ void swap_rows(int cols, double** a, double* c, int i, int j)
 
 void sort_rows(int rows, int cols, double** a, double* c)
 {
-	int i, j, k=0;
+	int i, j, k=-1;
 	for(i=0;i<rows;i++){
 		for(j=0;j<i+1;j++){
 			if(a[i][cols-1]>a[j][cols-1]){
@@ -143,13 +143,13 @@ void sort_rows(int rows, int cols, double** a, double* c)
 	}
 
 	for(i=0;i<rows;i++){
-		if(a[i][cols-1]==0){
+		if(a[i][cols-1]<0.00001){
 			k=i;
 			break;
 		}
 	}
 
-if(k>0)
+if(k!=-1)
 	for(i=k;i<rows;i++)
 		for(j=k;j<i+1;j++)
 			if(a[i][cols-1]<a[j][cols-1])
@@ -163,7 +163,7 @@ double min(int n, double** t, double* q){
 	double min=1000000;
 	for(i=0;i<n;i++){
 		if(t[i][0]+q[i]<min)
-		min=t[i][0]+q[i];
+			min=t[i][0]+q[i];
 	}
 
 	return min;
@@ -174,7 +174,7 @@ double max(int n, double** t, double* q){
 	double max=-1000000;
 	for(i=0;i<n;i++){
 		if(t[i][0]+q[i]>max)
-		max=t[i][0]+q[i];
+			max=t[i][0]+q[i];
 	}
 
 	return max;
@@ -228,6 +228,15 @@ while(1){
 	}
 	n2+=n1;
 	sort_rows(s, r, t, q);
+	printf("\nsorted\n");
+	for(i=0;i<s;i++){
+		//printf("%f ", q[i]);
+		for(j=0;j<r;j++){
+			printf("%f ", t[i][j]);
+		}
+		printf("\n");
+	}
+	printf("\n");
 
 	for(i=0;i<r-1;i++){
 		for(j=0;j<n2;j++){
