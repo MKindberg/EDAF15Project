@@ -218,11 +218,13 @@ for(i=0;i<s;i++){
 	}
 	printf("\n");*/
 while(1){
+	n1 = 0;
+	n2 = 0;
 	for (i=0;i<s;i++){
-		if(t[0][r-1]>0)
-		n1++;
+		if(t[i][r-1]>0)
+			n1++;
 		else if(t[i][r-1]<0)
-		n2++;
+			n2++;
 	}
 	n2+=n1;
 	sort_rows(s, r, t, q);
@@ -236,28 +238,36 @@ while(1){
 		q[j]=q[j]/t[j][r-1];
 	}
 
-	if(r==1){
+	
 		int b;
 		int B;
 		if(n2>n1){
 			b=max(s, t, q);
 		}
-		else
-		b=-1000000;
-
+		else{
+			b=-1000000;
+		}
 		if(n1>0){
 			B=min(s, t, q);
 		}
-		else
-		B=1000000;
-		if(b>B)
-		return 0;
+		else{
+			B=1000000;
+		}
+		
+		
+	if(r==1){
+		if(b>B){
+			return 0;
+		}
+	for(i=n2+1;i<s;i++)
+		if(q[i]<0)
+			return 0;
 		return 1;
 	}
 
 	int sp=s-n2+n1*(n2-n1);
 	if(sp==0)
-	return 1;
+		return 1;
 
 	r=r-1;
 	double D[sp][r];
