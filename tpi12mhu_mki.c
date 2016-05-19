@@ -158,10 +158,10 @@ if(k!=-1)
 }
 
 
-double min(int n, double** t, double* q){
+double min(double** t, double* q, int n1, int n2){
 	int i;
 	double min=1000000;
-	for(i=0;i<n;i++){
+	for(i=n1;i<n2;i++){
 		if(t[i][0]+q[i]<min)
 			min=t[i][0]+q[i];
 	}
@@ -169,10 +169,10 @@ double min(int n, double** t, double* q){
 	return min;
 }
 
-double max(int n, double** t, double* q){
+double max(double** t, double* q, int n1, int n2){
 	int i;
 	double max=-1000000;
-	for(i=0;i<n;i++){
+	for(i=n1;i<n2;i++){
 		if(t[i][0]+q[i]>max)
 			max=t[i][0]+q[i];
 	}
@@ -182,7 +182,7 @@ double max(int n, double** t, double* q){
 
 int fm_elim(int n, int m, int A[n][m], int* c)
 {
-	printf("n: %d", n);
+
 	int n1=0, n2=0, i, j;
 	int s = n;
 	int r = m;
@@ -191,16 +191,15 @@ int fm_elim(int n, int m, int A[n][m], int* c)
 		t[i]=malloc(m*sizeof(double));
 
 	double* q = malloc(n*sizeof(double));
-
+	
 	for(i=0;i<n;i++){
 		q[i] = (double) c[i];
 		for(j=0;j<m;j++)
 		t[i][j] = (double) A[i][j];
-
 	}
-/*printf("unsorted\n");
+	/*printf("\n\nq:\n");
 	for(i=0;i<s;i++){
-		//printf("%f ", q[i]);
+		printf("%f \n", q[i]);}
 		for(j=0;j<r;j++){
 				printf("%f ", t[i][j]);
 		}
@@ -217,26 +216,18 @@ for(i=0;i<s;i++){
 		printf("\n");
 	}
 	printf("\n");*/
+int b, B;
 while(1){
 	n1 = 0;
 	n2 = 0;
 	for (i=0;i<s;i++){
-		if(t[i][r-1]>0)
+		if(t[i][r-1]>0.00001)
 			n1++;
 		else if(t[i][r-1]<0)
 			n2++;
 	}
 	n2+=n1;
 	sort_rows(s, r, t, q);
-	printf("\nsorted\n");
-	for(i=0;i<s;i++){
-		//printf("%f ", q[i]);
-		for(j=0;j<r;j++){
-			printf("%f ", t[i][j]);
-		}
-		printf("\n");
-	}
-	printf("\n");
 
 	for(i=0;i<r-1;i++){
 		for(j=0;j<n2;j++){
@@ -248,16 +239,14 @@ while(1){
 	}
 
 	
-		int b;
-		int B;
 		if(n2>n1){
-			b=max(s, t, q);
+			b=max(t, q, n1+1, n2);
 		}
 		else{
 			b=-1000000;
 		}
 		if(n1>0){
-			B=min(s, t, q);
+			B=min(t, q, n1+1, n2);
 		}
 		else{
 			B=1000000;
