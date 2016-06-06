@@ -208,6 +208,13 @@ double max(double** t, double* q, int n1, int n2){
 	return max;
 }
 
+void freeAll(int rows, double** t, double* q){
+	for(int i=0;i<rows; i++)
+		free(t[i]);
+	free(t);
+	free(q);
+}
+
 int fm_elim(int n, int m, int A[n][m], int* c)
 {
 
@@ -267,18 +274,23 @@ while(1){
 		
 	if(r==1){
 		if(b>B){
+			freeAll(s, t, q);
 			return 0;
 		}
 	for(i=n2;i<s;i++)
 		if(q[i]<0){
+			freeAll(s, t, q);
 			return 0;
 		}
+freeAll(s, t, q);
 	return 1;
 	}
 
 	int sp=s-n2+n1*(n2-n1);
-	if(sp==0)
+	if(sp==0){
+freeAll(s, t, q);
 		return 1;
+	}
 
 	r=r-1;
 	double D[sp][r];
@@ -298,11 +310,16 @@ while(1){
 			D[n1*(n2-n1)+(i-n2)][k]=t[i][k];
 		}
 	}
-	//s=sp;
-	q=realloc(q, s*sizeof(double));
-	t=realloc(t, s*sizeof(double*));
+
+	freeAll(s, t, q);
+	//q=realloc(q, sp*sizeof(double));
+	//t=realloc(t, sp*sizeof(double*));
+	q=malloc(sp*sizeof(double));
+	t=malloc(sp*sizeof(double*));
+	s=sp;
 	for(i=0;i<s;i++){
-		t[i]=realloc(t[i], r*sizeof(double));
+		//t[i]=realloc(t[i], r*sizeof(double));
+		t[i]=malloc(r*sizeof(double*));
 		q[i]=d[i];
 		for(j=0;j<r;j++){
 			t[i][j]=D[i][j];

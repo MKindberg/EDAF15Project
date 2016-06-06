@@ -49,7 +49,7 @@ static struct fm {
 	ENTRY(tpi12mhu_mki),
 };
 #if DEBUG
-	static unsigned int correct[] = {1, 0};
+	static unsigned int correct[] = { 1, 0, 1, 0, 0, 1 };
 #else
 	static unsigned int correct[] = { 1, 0, 1, 0, 0, 0 };
 #endif
