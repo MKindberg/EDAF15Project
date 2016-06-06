@@ -251,14 +251,14 @@ while(1){
 	}
 	//printSys(s, r, t, q);
 	
-		if(n2>n1){
-			b=max(t, q, n1+1, n2);
+		if(n2>=n1){
+			b=max(t, q, n1, n2);
 		}
 		else{
 			b=-1000000;
 		}
-		if(n1>0){
-			B=min(t, q, n1+1, n2);
+		if(n1>=0){
+			B=min(t, q, n1, n2);
 		}
 		else{
 			B=1000000;
