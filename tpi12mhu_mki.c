@@ -5,6 +5,7 @@
 #include <unistd.h>
 #include <assert.h>
 #include <ctype.h>
+#include <math.h>
 
 static unsigned long long	fm_count;
 static volatile bool		proceed = false;
@@ -17,6 +18,9 @@ static void done(int unused)
 }
 
 int fm_elim(int n, int m, int A[n][m], int* c);
+void printSys(int r, int c, double** A, double* C);
+double roundn(double num, int n);
+void roundSys(int r, int c, double** A, double* C);
 
 unsigned long long tpi12mhu_mki(char* aname, char* cname, int seconds)
 {
@@ -154,6 +158,30 @@ if(k!=-1)
 		for(j=k;j<i+1;j++)
 			if(a[i][cols-1]<a[j][cols-1])
 				swap_rows(cols, a, c, i, j);
+int zero=0;
+int neg=0;
+for(i=0;i<rows;i++){
+	if(neg==1){
+		if(a[i][cols-1]>0){
+			printf("unsorted, %f\n", a[i][cols-1]);
+			printSys(rows, cols, a, c);
+			break;
+		}else if(a[i][cols-1]==0){
+			neg=0;
+			zero=1;
+		}
+	}else if(zero==1){
+		if(a[i][cols-1]!=0){
+			printf("unsorted, %f\n", a[i][cols-1]);
+			printSys(rows, cols, a, c);
+			break;
+		}
+	}
+	else if(a[i][cols-1]<0)
+		neg=1;
+	else if(a[i][cols-1]==0)
+		zero=1;
+}
 
 }
 
@@ -197,27 +225,10 @@ int fm_elim(int n, int m, int A[n][m], int* c)
 		for(j=0;j<m;j++)
 		t[i][j] = (double) A[i][j];
 	}
-	/*printf("\n\nq:\n");
-	for(i=0;i<s;i++){
-		printf("%f \n", q[i]);}
-		for(j=0;j<r;j++){
-				printf("%f ", t[i][j]);
-		}
-		printf("\n");
-	}
-	printf("\n");
-sort_rows(s, r, t, q);
-printf("\nsorted\n");
-for(i=0;i<s;i++){
-		//printf("%f ", q[i]);
-		for(j=0;j<r;j++){
-				printf("%f ", t[i][j]);
-		}
-		printf("\n");
-	}
-	printf("\n");*/
+
 int b, B;
 while(1){
+	roundSys(s, r, t, q);
 	n1 = 0;
 	n2 = 0;
 	for (i=0;i<s;i++){
@@ -295,6 +306,33 @@ while(1){
 		}
 	}
 }
+}
+
+void printSys(int r, int c, double** A, double* C){
+int i, j=0;
+for(i=0;i<r;i++){
+		printf("%f = ", C[i]);
+		for(j=0;j<c;j++){
+				printf("%f ", A[i][j]);
+		}
+		printf("\n");
+	}
+	printf("\n");
+}
+
+void roundSys(int r, int c, double** A, double* C){
+int i, j=0;
+int n=5;
+for(i=0;i<r;i++){
+		C[i]=roundn(C[i], n);
+		for(j=0;j<c;j++){
+			A[i][j]=roundn(A[i][j], n);
+		}
+	}
+}
+
+double roundn(double num, int n){
+	return round(num*pow(10, n))/pow(10, n);
 }
 
 

@@ -10,7 +10,7 @@ OUT	= fm
 OBJS	= main.o tpi12mhu_mki.o
 
 all: $(OBJS)
-	$(CC) $(CFLAGS) $(OBJS) -o $(OUT)
+	$(CC) $(CFLAGS) $(OBJS) -o $(OUT) -lm
 	./fm
 	size tpi12mhu_mki.o
 
