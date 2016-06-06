@@ -39,6 +39,7 @@ unsigned long long tpi12mhu_mki(char* aname, char* cname, int seconds);
 #define COUNT_WIDTH	(20)
 #define	SPACE		(4)
 #define WIDTH		(SPACE + NAME_WIDTH + COUNT_WIDTH)
+#define DEBUG		0
 
 static struct fm {
 	char*			name;
@@ -47,8 +48,11 @@ static struct fm {
 } fm[] = { 
 	ENTRY(tpi12mhu_mki),
 };
-
-static unsigned int correct[] = { 1, 0, 1, 0, 0, 0 };
+#if DEBUG
+	static unsigned int correct[] = {1, 0};
+#else
+	static unsigned int correct[] = { 1, 0, 1, 0, 0, 0 };
+#endif
 
 static int compare_count(const void* ap, const void* bp)
 {
