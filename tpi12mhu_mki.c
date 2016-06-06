@@ -229,7 +229,7 @@ int fm_elim(int n, int m, int A[n][m], int* c)
 int b, B;
 while(1){
 	roundSys(s, r, t, q);
-	printSys(s, r, t, q);
+	//printSys(s, r, t, q);
 	n1 = 0;
 	n2 = 0;
 	for (i=0;i<s;i++){
@@ -240,7 +240,7 @@ while(1){
 	}
 	n2+=n1;
 	sort_rows(s, r, t, q);
-	printSys(s, r, t, q);
+	//printSys(s, r, t, q);
 	for(i=0;i<r-1;i++){
 		for(j=0;j<n2;j++){
 			t[j][i]=t[j][i]/t[j][r-1];
@@ -249,7 +249,7 @@ while(1){
 	for(j=0;j<n2;j++){
 		q[j]=q[j]/t[j][r-1];
 	}
-	printSys(s, r, t, q);
+	//printSys(s, r, t, q);
 	
 		if(n2>n1){
 			b=max(t, q, n1+1, n2);
@@ -269,10 +269,11 @@ while(1){
 		if(b>B){
 			return 0;
 		}
-	for(i=n2+1;i<s;i++)
-		if(q[i]<0)
+	for(i=n2;i<s;i++)
+		if(q[i]<0){
 			return 0;
-		return 1;
+		}
+	return 1;
 	}
 
 	int sp=s-n2+n1*(n2-n1);
@@ -297,6 +298,7 @@ while(1){
 			D[n1*(n2-n1)+(i-n2)][k]=t[i][k];
 		}
 	}
+	//s=sp;
 	q=realloc(q, s*sizeof(double));
 	t=realloc(t, s*sizeof(double*));
 	for(i=0;i<s;i++){
@@ -306,6 +308,7 @@ while(1){
 			t[i][j]=D[i][j];
 		}
 	}
+
 }
 }
 
