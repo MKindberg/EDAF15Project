@@ -18,9 +18,6 @@ static void done(int unused)
 }
 
 int fm_elim(int n, int m, int A[n][m], int* c);
-void printSys(int r, int c, double** A, double* C);
-double roundn(double num, int n);
-void roundSys(int r, int c, double** A, double* C);
 
 unsigned long long tpi12mhu_mki(char* aname, char* cname, int seconds)
 {
@@ -89,13 +86,6 @@ unsigned long long tpi12mhu_mki(char* aname, char* cname, int seconds)
 	fclose(afile);
 	fclose(cfile);
 
-/*for(int i=0;i<rows;i++){
-	printf("%d |", c[i]);
-	for(int j=0;j<cols;j++){
-		printf("%d ", a[i][j]);
-	}
-	printf("\n");
-}*/
 	fm_elim(rows, cols, a, c);
 	if (seconds == 0) {
 		/* Just run once for validation. */
@@ -158,31 +148,6 @@ if(k!=-1)
 		for(j=k;j<i+1;j++)
 			if(a[i][cols-1]<a[j][cols-1])
 				swap_rows(cols, a, c, i, j);
-int zero=0;
-int neg=0;
-for(i=0;i<rows;i++){
-	if(neg==1){
-		if(a[i][cols-1]>0){
-			printf("unsorted, %f\n", a[i][cols-1]);
-			printSys(rows, cols, a, c);
-			break;
-		}else if(a[i][cols-1]==0){
-			neg=0;
-			zero=1;
-		}
-	}else if(zero==1){
-		if(a[i][cols-1]!=0){
-			printf("unsorted, %f\n", a[i][cols-1]);
-			printSys(rows, cols, a, c);
-			break;
-		}
-	}
-	else if(a[i][cols-1]<0)
-		neg=1;
-	else if(a[i][cols-1]==0)
-		zero=1;
-}
-
 }
 
 
@@ -215,6 +180,21 @@ void freeAll(int rows, double** t, double* q){
 	free(q);
 }
 
+double roundn(double num, int n){
+	return round(num*pow(10, n))/pow(10, n);
+}
+
+void roundSys(int r, int c, double** A, double* C){
+int i, j=0;
+int n=5;
+for(i=0;i<r;i++){
+		C[i]=roundn(C[i], n);
+		for(j=0;j<c;j++){
+			A[i][j]=roundn(A[i][j], n);
+		}
+	}
+}
+
 int fm_elim(int n, int m, int A[n][m], int* c)
 {
 
@@ -233,133 +213,97 @@ int fm_elim(int n, int m, int A[n][m], int* c)
 		t[i][j] = (double) A[i][j];
 	}
 
-int b, B;
-while(1){
-	roundSys(s, r, t, q);
-	//printSys(s, r, t, q);
-	n1 = 0;
-	n2 = 0;
-	for (i=0;i<s;i++){
-		if(t[i][r-1]>0)
-			n1++;
-		else if(t[i][r-1]<0)
-			n2++;
-	}
-	n2+=n1;
-	sort_rows(s, r, t, q);
-	//printSys(s, r, t, q);
-	for(i=0;i<r-1;i++){
-		for(j=0;j<n2;j++){
-			t[j][i]=t[j][i]/t[j][r-1];
-		}
-	}
-	for(j=0;j<n2;j++){
-		q[j]=q[j]/t[j][r-1];
-	}
-	//printSys(s, r, t, q);
-	
-		if(n2>=n1){
-			b=max(t, q, n1, n2);
-		}
-		else{
-			b=-1000000;
-		}
-		if(n1>=0){
-			B=min(t, q, n1, n2);
-		}
-		else{
-			B=1000000;
-		}
-		
-		
-	if(r==1){
-		if(b>B){
-			freeAll(s, t, q);
-			return 0;
-		}
-	for(i=n2;i<s;i++)
-		if(q[i]<0){
-			freeAll(s, t, q);
-			return 0;
-		}
-freeAll(s, t, q);
-	return 1;
-	}
+	int b, B;
+	while(1){
+		roundSys(s, r, t, q);
 
-	int sp=s-n2+n1*(n2-n1);
-	if(sp==0){
-freeAll(s, t, q);
-		return 1;
-	}
+		n1 = 0;
+		n2 = 0;
+		for (i=0;i<s;i++){
+			if(t[i][r-1]>0)
+				n1++;
+			else if(t[i][r-1]<0)
+				n2++;
+		}
+		n2+=n1;
+		sort_rows(s, r, t, q);
 
-	r=r-1;
-	double D[sp][r];
-	double d[sp];
-	int k;
-	for(i=0;i<n1;i++){
-		for(j=n1;j<n2;j++){
-			d[i*(n2-n1)+(j-n1)]=q[i]-q[j];
-			for(k=0;k<r;k++){
-				D[i*(n2-n1)+(j-n1)][k]=t[i][k]-t[j][k];
+		for(i=0;i<r-1;i++){
+			for(j=0;j<n2;j++){
+				t[j][i]=t[j][i]/t[j][r-1];
 			}
 		}
-	}
-	for(i=n2;i<s;i++){
-		d[n1*(n2-n1)+(i-n2)]=q[i];
-		for(k=0;k<r;k++){
-			D[n1*(n2-n1)+(i-n2)][k]=t[i][k];
+		for(j=0;j<n2;j++){
+			q[j]=q[j]/t[j][r-1];
 		}
-	}
-
-	freeAll(s, t, q);
-	//q=realloc(q, sp*sizeof(double));
-	//t=realloc(t, sp*sizeof(double*));
-	q=malloc(sp*sizeof(double));
-	t=malloc(sp*sizeof(double*));
-	s=sp;
-	for(i=0;i<s;i++){
-		//t[i]=realloc(t[i], r*sizeof(double));
-		t[i]=malloc(r*sizeof(double*));
-		q[i]=d[i];
-		for(j=0;j<r;j++){
-			t[i][j]=D[i][j];
+	
+			if(n2>=n1){
+				b=max(t, q, n1, n2);
+			}
+			else{
+				b=-1000000;
+			}
+			if(n1>=0){
+				B=min(t, q, n1, n2);
+			}
+			else{
+				B=1000000;
+			}
+		
+		
+		if(r==1){
+			if(b>B){
+				freeAll(s, t, q);
+				return 0;
+			}
+		for(i=n2;i<s;i++)
+			if(q[i]<0){
+				freeAll(s, t, q);
+				return 0;
+			}
+		freeAll(s, t, q);
+		return 1;
 		}
-	}
 
-}
-}
-
-void printSys(int r, int c, double** A, double* C){
-int i, j=0;
-for(i=0;i<r;i++){
-		printf("%f = ", C[i]);
-		for(j=0;j<c;j++){
-				printf("%f ", A[i][j]);
+		int sp=s-n2+n1*(n2-n1);
+		if(sp==0){
+			freeAll(s, t, q);
+			return 1;
 		}
-		printf("\n");
-	}
-	printf("\n");
-}
 
-void roundSys(int r, int c, double** A, double* C){
-int i, j=0;
-int n=5;
-for(i=0;i<r;i++){
-		C[i]=roundn(C[i], n);
-		for(j=0;j<c;j++){
-			A[i][j]=roundn(A[i][j], n);
+		r=r-1;
+		double D[sp][r];
+		double d[sp];
+		int k;
+		for(i=0;i<n1;i++){
+			for(j=n1;j<n2;j++){
+				d[i*(n2-n1)+(j-n1)]=q[i]-q[j];
+				for(k=0;k<r;k++){
+					D[i*(n2-n1)+(j-n1)][k]=t[i][k]-t[j][k];
+				}
+			}
 		}
+		for(i=n2;i<s;i++){
+			d[n1*(n2-n1)+(i-n2)]=q[i];
+			for(k=0;k<r;k++){
+				D[n1*(n2-n1)+(i-n2)][k]=t[i][k];
+			}
+		}
+
+		freeAll(s, t, q);
+		q=malloc(sp*sizeof(double));
+		t=malloc(sp*sizeof(double*));
+		s=sp;
+		for(i=0;i<s;i++){
+			t[i]=malloc(r*sizeof(double*));
+			q[i]=d[i];
+			for(j=0;j<r;j++){
+				t[i][j]=D[i][j];
+			}
+		}
+
 	}
 }
 
-double roundn(double num, int n){
-	return round(num*pow(10, n))/pow(10, n);
-}
 
 
-/*int main(int argc, char** argv)
-{
-	tpi12mhu_mki("/h/d8/o/tpi12mki/Desktop/project/input/1/A","/h/d8/o/tpi12mki/Desktop/project/input/1/c",3);
-
-}
-*/
